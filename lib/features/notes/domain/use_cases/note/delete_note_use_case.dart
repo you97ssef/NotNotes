@@ -14,7 +14,7 @@ class DeleteNoteUseCase implements UseCase<CaseState<void>, String> {
     try {
       return CaseSuccess(await _repo.deleteNote(params));
     } catch (e) {
-      return CaseError(e as Exception);
+      return CaseError(e);
     }
   }
 }

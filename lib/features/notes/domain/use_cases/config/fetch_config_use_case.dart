@@ -15,7 +15,7 @@ class FetchConfigUseCase implements UseCase<CaseState<ConfigEntity>, void> {
     try {
       return CaseSuccess(await _repo.fetch());
     } catch (e) {
-      return CaseError(e as Exception);
+      return CaseError(e);
     }
   }
 }

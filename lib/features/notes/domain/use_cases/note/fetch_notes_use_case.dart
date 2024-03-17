@@ -15,7 +15,7 @@ class FetchNotesUseCase implements UseCase<CaseState<List<NoteEntity>>, void> {
     try {
       return CaseSuccess(await _repo.fetchNotes());
     } catch (e) {
-      return CaseError(e as Exception);
+      return CaseError(e);
     }
   }
 }

@@ -3,7 +3,7 @@ part of 'config_bloc.dart';
 @immutable
 sealed class ConfigState {
   final ConfigEntity? config;
-  final Exception? error;
+  final Object? error;
 
   const ConfigState({this.config, this.error});
 }
@@ -15,5 +15,5 @@ final class ConfigLoaded extends ConfigState {
 }
 
 final class ConfigError extends ConfigState {
-  const ConfigError(Exception error) : super(error: error);
+  const ConfigError(Object error) : super(error: error);
 }

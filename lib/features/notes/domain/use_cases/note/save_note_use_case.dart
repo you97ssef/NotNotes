@@ -15,7 +15,7 @@ class SaveNoteUseCase implements UseCase<CaseState<void>, NoteEntity> {
     try {
       return CaseSuccess(_repo.saveNote(note: params));
     } catch (e) {
-      return CaseError(e as Exception);
+      return CaseError(e);
     }
   }
 }

@@ -3,7 +3,7 @@ part of 'note_bloc.dart';
 @immutable
 sealed class NoteState {
   final List<NoteEntity>? notes;
-  final Exception? error;
+  final Object? error;
 
   const NoteState({this.notes, this.error});
 }
@@ -15,5 +15,5 @@ final class NoteLoaded extends NoteState {
 }
 
 final class NoteError extends NoteState {
-  const NoteError(Exception error) : super(error: error);
+  const NoteError(Object error) : super(error: error);
 }

@@ -15,7 +15,7 @@ class SaveConfigUseCase implements UseCase<CaseState<void>, ConfigEntity> {
     try {
       return CaseSuccess(await _repo.save(params));
     } catch (e) {
-      return CaseError(e as Exception);
+      return CaseError(e);
     }
   }
 }
