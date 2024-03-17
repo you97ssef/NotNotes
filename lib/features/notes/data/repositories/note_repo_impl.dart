@@ -1,19 +1,19 @@
 import 'package:not_notes/features/notes/data/data_sources/local_note_service.dart';
 import 'package:not_notes/features/notes/data/data_sources/remote_note_service.dart';
-import 'package:not_notes/features/notes/domain/entities/config_entity.dart';
 import 'package:not_notes/features/notes/domain/entities/note_entity.dart';
 import 'package:not_notes/features/notes/domain/repositories/note_repo.dart';
+import 'package:not_notes/features/notes/presentation/bloc/config/config_bloc.dart';
 
 class NoteRepoImpl implements NoteRepo {
-  final ConfigEntity _config;
+  final ConfigBloc _bloc;
   final LocalNoteService _localService;
-  final CloudNoteService _cloudService;
+  final RemoteNoteService _cloudService;
 
-  NoteRepoImpl(this._config, this._localService, this._cloudService);
+  NoteRepoImpl(this._bloc, this._localService, this._cloudService);
 
   @override
   Future<List<NoteEntity>> fetchNotes() async {
-    if (_config.apiKey != null && _config.apiUrl != null) {
+    if (_bloc.state.config!.apiKey != null && _bloc.state.config!.apiUrl != null) {
       var cloudNotes = await _cloudService.get();
       var localNotes = await _localService.get();
 
@@ -64,7 +64,7 @@ class NoteRepoImpl implements NoteRepo {
 
   @override
   Future<void> saveNote({required NoteEntity note}) async {
-    if (_config.apiKey != null && _config.apiUrl != null) {
+    if (_bloc.state.config!.apiKey != null && _bloc.state.config!.apiUrl != null) {
       await _localService.save(note);
       await _cloudService.save(note);
     } else {
@@ -74,7 +74,7 @@ class NoteRepoImpl implements NoteRepo {
 
   @override
   Future<void> deleteNote(String id) async {
-    if (_config.apiKey != null && _config.apiUrl != null) {
+    if (_bloc.state.config!.apiKey != null && _bloc.state.config!.apiUrl != null) {
       await _localService.delete(id);
       await _cloudService.delete(id);
     } else {
