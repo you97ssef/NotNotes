@@ -1,0 +1,1 @@
+const String noteBox = 'notes_data';
