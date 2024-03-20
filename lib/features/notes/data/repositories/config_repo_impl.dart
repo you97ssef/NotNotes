@@ -16,4 +16,14 @@ class ConfigRepoImpl implements ConfigRepo {
   Future<ConfigEntity> fetch() async {
     return await _service.loadConfig();
   }
+
+  @override
+  Future<bool> checkCloud(ConfigEntity config) async {
+    return await _service.checkCloud(config);
+  }
+
+  @override
+  Future<bool> checkNetwork() async {
+    return await _service.checkNetwork();
+  }
 }
