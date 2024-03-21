@@ -8,7 +8,9 @@ sealed class ConfigState {
   const ConfigState({this.config, this.error});
 }
 
-final class ConfigLoading extends ConfigState {}
+final class ConfigLoading extends ConfigState {
+  const ConfigLoading({super.config});
+}
 
 final class ConfigLoaded extends ConfigState {
   const ConfigLoaded(ConfigEntity config) : super(config: config);
