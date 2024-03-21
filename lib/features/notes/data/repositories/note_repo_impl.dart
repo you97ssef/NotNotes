@@ -13,58 +13,53 @@ class NoteRepoImpl implements NoteRepo {
 
   @override
   Future<List<NoteEntity>> fetchNotes() async {
-    if (_bloc.state.config!.apiKey != null && _bloc.state.config!.apiUrl != null) {
+    if (_bloc.state.config!.networkConnected && _bloc.state.config!.apiKey != null && _bloc.state.config!.apiUrl != null) {
       var cloudNotes = await _cloudService.get();
       var localNotes = await _localService.get();
 
-      return _sortNotes(_mergeLists(localNotes, cloudNotes));
+      return NoteRepo.sortNotes(await _mergeLists(localNotes, cloudNotes));
     } else {
-      return _sortNotes(await _localService.get());
+      return NoteRepo.sortNotes(await _localService.get());
     }
   }
 
-  List<NoteEntity> _mergeLists(List<NoteEntity> local, List<NoteEntity> cloud) {
+  Future<List<NoteEntity>> _mergeLists(List<NoteEntity> local, List<NoteEntity> cloud) async {
     Map<String, NoteEntity> mergedMap = {};
 
     for (NoteEntity note in local) {
-      _syncNote(mergedMap, note, false);
+      await _syncNote(mergedMap, note, false);
     }
 
     for (NoteEntity note in cloud) {
-      _syncNote(mergedMap, note, true);
+      await _syncNote(mergedMap, note, true);
     }
 
     return mergedMap.values.toList();
   }
 
-  void _syncNote(Map<String, NoteEntity> mergedMap, NoteEntity note, bool isCloud) {
+  Future<void> _syncNote(Map<String, NoteEntity> mergedMap, NoteEntity note, bool isCloud) async {
     if (mergedMap.containsKey(note.id)) {
       if (note.updatedTime.isAfter(mergedMap[note.id]!.updatedTime)) {
         mergedMap[note.id] = note;
         if (isCloud) {
-          _localService.save(note);
+          await _localService.save(note);
         } else {
-          _cloudService.save(note);
+          await _cloudService.save(note);
         }
       }
     } else {
       mergedMap[note.id] = note;
       if (isCloud) {
-        _localService.save(note);
+        await _localService.save(note);
       } else {
-        _cloudService.save(note);
+        await _cloudService.save(note);
       }
     }
   }
 
-  List<NoteEntity> _sortNotes(List<NoteEntity> notes) {
-    notes.sort((a, b) => b.updatedTime.compareTo(a.updatedTime));
-    return notes;
-  }
-
   @override
   Future<void> saveNote({required NoteEntity note}) async {
-    if (_bloc.state.config!.apiKey != null && _bloc.state.config!.apiUrl != null) {
+    if (_bloc.state.config!.networkConnected && _bloc.state.config!.apiKey != null && _bloc.state.config!.apiUrl != null) {
       await _localService.save(note);
       await _cloudService.save(note);
     } else {
@@ -74,7 +69,7 @@ class NoteRepoImpl implements NoteRepo {
 
   @override
   Future<void> deleteNote(String id) async {
-    if (_bloc.state.config!.apiKey != null && _bloc.state.config!.apiUrl != null) {
+    if (_bloc.state.config!.networkConnected && _bloc.state.config!.apiKey != null && _bloc.state.config!.apiUrl != null) {
       await _localService.delete(id);
       await _cloudService.delete(id);
     } else {
