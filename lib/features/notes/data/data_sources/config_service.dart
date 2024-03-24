@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:not_notes/config/theme/app_theme.dart';
 import 'package:not_notes/features/notes/data/models/config_model.dart';
 import 'package:not_notes/features/notes/domain/entities/config_entity.dart';
@@ -40,9 +38,9 @@ class ConfigService {
 
   Future<bool> checkNetwork() async {
     try {
-      final result = await http.get(Uri.parse('www.google.com'));
+      final result = await http.head(Uri.parse('https://code.jquery.com/jquery-2.2.4.min.js'));
       return result.statusCode == 200;
-    } on SocketException catch (_) {
+    } catch (e) {
       return false;
     }
   }
