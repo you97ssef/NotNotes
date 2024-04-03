@@ -1,6 +1,6 @@
 class AppConstants {
   static const String title = 'Not Notes';
-  static const String version = '0.1.0';
+  static const String version = '0.1.1';
   static const double logoSize = 128;
   static const double mediumLogoSize = 64;
   static const double smallLogoSize = 32;

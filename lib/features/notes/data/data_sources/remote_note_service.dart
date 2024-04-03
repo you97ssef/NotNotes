@@ -13,7 +13,13 @@ class RemoteNoteService {
     final response = await http.get(Uri.parse('${_bloc.state.config!.apiUrl}?code=${_bloc.state.config!.apiKey}&query=all'));
 
     if (response.statusCode < 400) {
-      return jsonDecode(response.body).map<NoteModel>((note) => NoteModel.fromJson(note)).toList();
+      return jsonDecode(response.body).map<NoteModel>((note) {
+        try {
+          return NoteModel.fromJson(note);
+        } catch (e) {
+          return NoteModel.fresh(title: 'ErrorCloud', content: 'Error Entry in the cloud try to fix it');
+        }
+      }).toList();
     } else {
       throw Exception('Failed to load notes');
     }
