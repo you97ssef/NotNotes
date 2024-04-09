@@ -62,6 +62,10 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
   }
 
   Future<void> _onDeleteNote(DeleteNoteEvent event, Emitter<NoteState> emit) async {
+    var state = this.state;
+
+    emit(NoteLoading());
+    
     var result = await _delete(params: event.noteId);
 
     if (result is CaseSuccess<void>) {
