@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hive/hive.dart';
 import 'package:not_notes/core/util/util.dart';
 import 'package:not_notes/features/notes/domain/entities/note_entity.dart';
@@ -31,8 +33,8 @@ class NoteModel extends HiveObject implements NoteEntity {
   factory NoteModel.fromJson(Map<String, dynamic> json) {
     return NoteModel(
       id: json['id'].toString(),
-      title: json['title'].toString(),
-      content: json['content'].toString(),
+      title: utf8.decode(base64.decode(json['title'])),
+      content: utf8.decode(base64.decode(json['content'])),
       createdTime: DateTime.parse(json['createdTime']),
       updatedTime: DateTime.parse(json['updatedTime']),
     );

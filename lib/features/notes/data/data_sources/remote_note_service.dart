@@ -28,7 +28,7 @@ class RemoteNoteService {
   Future<bool> save(NoteEntity note) async {
     final response = await http.get(
       Uri.parse(
-          '${_bloc.state.config!.apiUrl}?code=${_bloc.state.config!.apiKey}&query=save&id=${note.id}&title=${note.title}&content=${note.content}&createdTime=${note.createdTime}&updatedTime=${note.updatedTime}'),
+          '${_bloc.state.config!.apiUrl}?code=${_bloc.state.config!.apiKey}&query=save&id=${note.id}&title=${base64.encode(utf8.encode(note.title))}&content=${base64.encode(utf8.encode(note.content))}&createdTime=${note.createdTime.toIso8601String()}&updatedTime=${note.updatedTime.toIso8601String()}'),
     );
 
     if (response.statusCode < 400) {
