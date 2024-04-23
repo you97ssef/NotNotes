@@ -24,37 +24,29 @@ class NoteRepoImpl implements NoteRepo {
   }
 
   Future<List<NoteEntity>> _mergeLists(List<NoteEntity> local, List<NoteEntity> cloud) async {
-    Map<String, NoteEntity> mergedMap = {};
+    List<NoteEntity> syncedList = [];
 
-    for (NoteEntity note in local) {
-      await _syncNote(mergedMap, note, false);
+    for (var ln in local) {
+      var cn = cloud.where((n) => n.id == ln.id).firstOrNull;
+      if (cn == null || ln.updatedTime.isAfter(cn.updatedTime)) {
+        await _cloudService.save(ln);
+        syncedList.add(ln);
+      } else {
+        syncedList.add(cn);
+      }
     }
 
-    for (NoteEntity note in cloud) {
-      await _syncNote(mergedMap, note, true);
-    }
-
-    return mergedMap.values.toList();
-  }
-
-  Future<void> _syncNote(Map<String, NoteEntity> mergedMap, NoteEntity note, bool isCloud) async {
-    if (mergedMap.containsKey(note.id)) {
-      if (note.updatedTime.isAfter(mergedMap[note.id]!.updatedTime)) {
-        mergedMap[note.id] = note;
-        if (isCloud) {
-          await _localService.save(note);
-        } else {
-          await _cloudService.save(note);
+    for (var cn in cloud) {
+      var ln = local.where((n) => n.id == cn.id).firstOrNull;
+      if (ln == null || cn.updatedTime.isAfter(ln.updatedTime)) {
+        await _localService.save(cn);
+        if (!syncedList.contains(cn)) {
+          syncedList.add(cn);
         }
       }
-    } else {
-      mergedMap[note.id] = note;
-      if (isCloud) {
-        await _localService.save(note);
-      } else {
-        await _cloudService.save(note);
-      }
     }
+
+    return syncedList;
   }
 
   @override
